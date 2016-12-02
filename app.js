@@ -13,12 +13,8 @@ $(function(){
 
     //start game and initialize players 
 
-    var score0, score1, current0, current1, activePlayer;
-    
-    score0 = $("#score-0");
-    score1 = $("#score-1");
-    current0 = $("#current-0");
-    current1 = $("#current-1");    
+    var current,activePlayer;
+    current = 0;
     activePlayer = Math.floor(Math.random() * 2);
     
     $(".player-"+activePlayer+"-panel").addClass("active");
@@ -27,10 +23,10 @@ $(function(){
     
     $(".btn-roll").on("click", function(event){
         event.preventDefault();
-        var diceVal,diceImage,dice,current = 0;
-        
+        var diceVal,diceImage,dice;
+        var totalDelay = 0;
         diceVal = Math.floor(Math.random() * 6) + 1;
-        //console.log("dice value : " + diceVal);
+        console.log("dice value : " + diceVal);
         diceImage = "dice-" + diceVal + ".png";
         //console.log("image " + diceImage);
         dice = $(".dice");
@@ -45,49 +41,78 @@ $(function(){
                     var randomDiceImage = "dice-" + random + ".png";
                     dice.attr("src", randomDiceImage);
                 }
-                
-                setTimeout(rotate, 100 * x);
+                totalDelay += 10 * x;
+                setTimeout(rotate, 10 * x);
                                 
             }
-            
-            setTimeout(function() {
-                dice.attr("src",diceImage);
-                }, 1000);
             
         }
         
         rotateDice();
         
-        diceVal !== 1 ? current += diceVal : current = 0;
-        currentPlayer.text(current);
+        // update active players current score 
         
-        if(diceVal === 1) {
-            togglePlayer();
-        }
-        
-        function togglePlayer() {  
-            var plyScore;
-            if(activePlayer === 1) {
-                plyScore = score1.text();
-                plyScore += current;
-                score0.text(plyScore);
-                currentPlayer.text("0");
-                currentPlayer = $("#current-" + 0);
-                $(".player-"+activePlayer+"-panel").toggleClass("active");
-                activePlayer = 0;
+        setTimeout(function (){
+            dice.attr("src", diceImage);
+           
+            if(diceVal !== 1) {
+                current += diceVal;
+                console.log("new current" + current);
+                $("#current-"+activePlayer).text(current);
             }
             else {
-                plyScore = player0Score.text();
-                plyScore += current;
-                player1Score.text(plyScore);
-                currentPlayer.text("0");
-                currentPlayer = $("#current-" + 1);
-                $(".player-"+activePlayer+"-panel").toggleClass("active");
-                activePlayer = 1;
+                var curr = parseInt($("#score-"+activePlayer).text());
+                current = curr + current;
+                $("#score-"+activePlayer).text(current);
+                current = 0;
+                $("#current-"+activePlayer).text(current);
+                togglePlayer();
             }
-        }
+            
+        }, totalDelay);
         
     });
+    
+    // hold button function implementation
+    
+    $(".btn-hold").on("click", function(event) {
+        event.preventDefault();
+        var temp = parseInt($("#score-" + activePlayer).text());
+        current += temp;
+        $("#score-"+ activePlayer).text(current);
+        current = 0;
+        $("#current-"+activePlayer).text(current);
+        togglePlayer();
+    });
+    
+    
+    $(".btn-new").on("click", function(event) {
+       resetGame(); 
+    });
+    
+        function togglePlayer() {
+            if(activePlayer === 0) {
+                activePlayer = 1;
+            }
+            else {
+                activePlayer = 0;
+            }
+         $(".player-0-panel").toggleClass("active");
+         $(".player-1-panel").toggleClass("active");
+
+            
+        }
+       
+    function resetGame() {
+        $("#score-0").text(0);
+        $("#score-1").text(0);
+        $("#current-0").text("0");
+        $("#current-1").text("0");
+        $(".player-"+activePlayer+"-panel").toggleClass("active");
+        activePlayer = Math.floor(Math.random() * 2);
+        $(".player-"+activePlayer+"-panel").toggleClass("active");
+
+}
     
     
 });
