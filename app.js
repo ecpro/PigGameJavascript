@@ -90,6 +90,8 @@ $(function(){
        resetGame(); 
     });
     
+    // toggle players 
+    
         function togglePlayer() {
             if(activePlayer === 0) {
                 activePlayer = 1;
@@ -103,6 +105,8 @@ $(function(){
             
         }
        
+    // reset game 
+    
     function resetGame() {
         $("#score-0").text(0);
         $("#score-1").text(0);
