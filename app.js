@@ -11,7 +11,8 @@ GAME RULES:
 
 $(function () {
 
-    var current, activePlayer, diceVal, players, lastDiceVal = 0;
+    var current, activePlayer, diceVal, players, lastDiceVal = 0,
+        maxVal = 0;
 
     // initiallize variables and start game
     init();
@@ -80,7 +81,7 @@ $(function () {
                     console.log("new current" + current);
                     $("#current-" + activePlayer).text(current);
                     lastDiceVal = diceVal;
-                    if (players[activePlayer] >= 100) {
+                    if (players[activePlayer] >= maxVal) {
                         $("#name-" + activePlayer).text("Winner");
                         $(".player-" + activePlayer + "-panel").addClass("winner");
                         togglePlayer();
@@ -132,9 +133,19 @@ $(function () {
         $(".player-0-panel").removeClass("winner");
         $(".player-1-panel").removeClass("winner");
         players = [0, 0];
-        current = 0, lastDiceVal = 0;
+        current = 0, lastDiceVal = 0, maxVal = 0;
         $(".btn-hold").bind("click", togglePlayer);
         $(".btn-roll").bind("click", rollDice);
+        $(".modal, .modal-overlay").addClass("is-visible");
+        $("#betForm").on("submit", function (event) {
+            event.preventDefault();
+            var inputVal = $("#bet").val();
+            if (inputVal > 0) {
+                $(".modal, .modal-overlay").removeClass("is-visible");
+                maxVal = parseInt(inputVal, 10);
+            }
+
+        });
     }
 
 
