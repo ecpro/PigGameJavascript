@@ -11,13 +11,13 @@ GAME RULES:
 
 $(function () {
 
-    var current, activePlayer, diceVal, players;
+    var current, activePlayer, diceVal, players, lastDiceVal = 0;
 
     // initiallize variables and start game
     init();
-    
+
     // new game button 
-    
+
     $(".btn-new").on("click", function (event) {
         $(".player-" + activePlayer + "-panel").toggleClass("active");
         init();
@@ -69,19 +69,25 @@ $(function () {
             // if diceVal === 1 then set the current to activePlayer's score and togglePlayer 
 
             if (diceVal !== 1) {
-                players[activePlayer] += diceVal;
-                console.log(activePlayer + " " + players[activePlayer]);
-                current += diceVal;
-                console.log("new current" + current);
-                $("#current-" + activePlayer).text(current);
 
-                if (players[activePlayer] >= 100) {
-                    $("#name-" + activePlayer).text("Winner");
-                    $(".player-" + activePlayer + "-panel").addClass("winner");
+                if (diceVal === 6 && lastDiceVal === 6) {
+                    players[activePlayer] = 0;
                     togglePlayer();
-                    console.log(this);
-                    $(".btn-roll").off("click");
-                    $(".btn-hold").off("click");
+                } else {
+                    players[activePlayer] += diceVal;
+                    console.log(activePlayer + " " + players[activePlayer]);
+                    current += diceVal;
+                    console.log("new current" + current);
+                    $("#current-" + activePlayer).text(current);
+                    lastDiceVal = diceVal;
+                    if (players[activePlayer] >= 100) {
+                        $("#name-" + activePlayer).text("Winner");
+                        $(".player-" + activePlayer + "-panel").addClass("winner");
+                        togglePlayer();
+                        console.log(this);
+                        $(".btn-roll").off("click");
+                        $(".btn-hold").off("click");
+                    }
                 }
 
             } else {
@@ -108,7 +114,7 @@ $(function () {
         }
         $(".player-0-panel").toggleClass("active");
         $(".player-1-panel").toggleClass("active");
-
+        lastDiceVal = 0;
 
     }
 
@@ -126,7 +132,7 @@ $(function () {
         $(".player-0-panel").removeClass("winner");
         $(".player-1-panel").removeClass("winner");
         players = [0, 0];
-        current = 0;
+        current = 0, lastDiceVal = 0;
         $(".btn-hold").bind("click", togglePlayer);
         $(".btn-roll").bind("click", rollDice);
     }
